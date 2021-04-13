@@ -6,7 +6,10 @@ const Task = require("../models/task");
 
 const userSchema = mongoose.Schema(
   {
-    name: { type: String, required: true, trim: true },
+    name: { type: String, required: true, trim: true, default: "Name" },
+    department: { type: String, required: true, trim: true, default: "IT" },
+    passoutYear: { type: Number, required: true, trim: true, default: "2020" },
+
     age: {
       type: Number,
       default: 0,
@@ -21,7 +24,7 @@ const userSchema = mongoose.Schema(
       required: true,
       lowercase: true,
       trim: true,
-      unique: true,
+      //unique: true,
       validate(value) {
         if (!validator.isEmail(value)) {
           throw new Error("Not a valid Email");
@@ -31,13 +34,13 @@ const userSchema = mongoose.Schema(
     password: {
       type: String,
       required: true,
-      minlength: 7,
+      minlength: 3,
       trim: true,
-      validate(value) {
-        if (value.includes("password")) {
-          throw new Error("Password not to contain the word password");
-        }
-      },
+      // validate(value) {
+      //   if (value.includes("password")) {
+      //     throw new Error("Password not to contain the word password");
+      //   }
+      // },
     },
     tokens: [
       {
@@ -47,20 +50,17 @@ const userSchema = mongoose.Schema(
         },
       },
     ],
-    avatar: {
-      type: Buffer,
-    },
   },
   {
     timestamps: true,
   }
 );
 
-userSchema.virtual("tasks", {
-  ref: "Task",
-  localField: "_id",
-  foreignField: "owner",
-});
+// userSchema.virtual("tasks", {
+//   ref: "Task",
+//   localField: "_id",
+//   foreignField: "owner",
+// });
 
 userSchema.methods.toJSON = function () {
   const user = this;
@@ -77,7 +77,7 @@ userSchema.methods.generateAuthToken = async function () {
 
   const token = jwt.sign({ _id: user._id.toString() }, "imafullstackdeveloper");
   user.tokens = user.tokens.concat({ token });
-  
+
   await user.save();
   return token;
 };
@@ -107,11 +107,11 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-userSchema.pre("remove", async function (next) {
-  const user = this;
-  await Task.deleteMany({ owner: user._id });
-  next();
-});
+// userSchema.pre("remove", async function (next) {
+//   const user = this;
+//   await Task.deleteMany({ owner: user._id });
+//   next();
+// });
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;

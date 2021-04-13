@@ -6,8 +6,8 @@ const sendWelcomeEmail = (email, name) => {
     sgMail.send({
       to: email,
       from: "testinggrounds221@gmail.com",
-      subject: "Hey There, from TaskManager",
-      text: `Hey ${name}. Thanks for signing up. Do let me know how it  goes`,
+      subject: "Hey There",
+      text: `Hey ${name}.`,
     });
   } catch (e) {
     console.log(e);
