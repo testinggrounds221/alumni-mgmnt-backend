@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require("multer");
 const { ObjectID, ObjectId } = require("mongodb");
 const auth = require("../middleware/auth");
-const cors = require('cors');
+const cors = require("cors");
 const User = require("../models/user");
 const sharp = require("sharp");
 const {
@@ -11,21 +11,21 @@ const {
   sendCancellationEmail,
 } = require("../emails/accounts");
 
-router.post("/users",cors(), async (req, res) => {
+router.post("/users", cors(), async (req, res) => {
   const user = new User(req.body);
   const token = await user.generateAuthToken();
-  console.log(user.firstName)
+  //console.log(user.firstName);
 
   try {
     await user.save();
-    sendWelcomeEmail(user.email, user.firstName);
+    //sendWelcomeEmail(user.email, user.firstName); !!!!!!! CHANGE DURING PRODUCTION !!!!!!!
     res.status(201).send({ user, token });
   } catch (e) {
     res.status(400).send(e);
   }
 });
 
-router.post("/users/login", async (req, res) => {
+router.post("/users/login", cors(), async (req, res) => {
   try {
     const user = await User.findByCredentials(
       req.body.email,
@@ -62,16 +62,16 @@ router.post("/users/logoutAll", auth, async (req, res) => {
 });
 
 // auth is middleware
-router.get("/users/me", auth, async (req, res) => {
+router.get("/users/me", cors(), auth, async (req, res) => {
   res.send(req.user);
 });
 
-router.get("/users/emails",cors(), async (req, res) => {
+router.get("/users/emails", cors(), async (req, res) => {
   //const match = {};
   //const sort = {};
   try {
     // const tasks = await Task.find({ owner: req.user.id });
-    const users = await User.find({},{email:1})
+    const users = await User.find({}, { email: 1 });
     res.send(users);
   } catch (e) {
     res.status(500).send();
