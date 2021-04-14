@@ -6,30 +6,49 @@ const Task = require("../models/task");
 
 const userSchema = mongoose.Schema(
   {
-    name: { type: String, required: true, trim: true, default: "Name" },
-    department: { type: String, required: true, trim: true, default: "IT" },
-    passoutYear: { type: Number, required: true, trim: true, default: "2020" },
-
-    age: {
-      type: Number,
-      default: 0,
-      validate(value) {
-        if (value < 0) {
-          throw new Error("Negative value cannot be accepted");
-        }
-      },
+    firstName: { type: String, required: true, trim: true, default: "Name" },
+    passOutYear: { type: Number, required: true, trim: true, default: "2020" },
+    collegeId: { type: String, required: true, trim: true, default: "cl1" },
+    departmentId: { type: String, required: true, trim: true, default: "d1" },
+    companyName: {
+      type: String,
+      required: true,
+      trim: true,
+      default: "Honeywell",
     },
+    companyRole: {
+      type: String,
+      required: true,
+      trim: true,
+      default: "Program Manager",
+    },
+    specalization: {
+      type: String,
+      required: true,
+      trim: true,
+      default: "Blockchain",
+    },
+    linkedIn: {
+      type: String,
+      required: true,
+      trim: true,
+      default: "www.google.com",
+    },
+    phoneNumber: {
+      type: Number,
+      required: true,
+      trim: true,
+      default: "123456",
+    },
+
+    authenticated: { type: Boolean, default: false },
+
     email: {
       type: String,
       required: true,
       lowercase: true,
       trim: true,
       //unique: true,
-      validate(value) {
-        if (!validator.isEmail(value)) {
-          throw new Error("Not a valid Email");
-        }
-      },
     },
     password: {
       type: String,
