@@ -78,6 +78,41 @@ router.get("/users/emails", cors(), async (req, res) => {
   }
 });
 
+router.get("/users/all", cors(), async (req, res) => {
+  console.log("Getting users...");
+  try {
+    const users = await User.find(
+      {},
+      {
+        firstName: 1,
+        email: 1,
+        passOutYear: 1,
+        departmentId: 1,
+        collegeId: 1,
+        companyName: 1,
+        linkedIn: 1,
+        authenticated: 1,
+        userType: 1,
+      }
+    );
+    res.send(users);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
+router.get("/users", cors(), async (req, res) => {
+  //const match = {};
+  //const sort = {};
+  try {
+    // const tasks = await Task.find({ owner: req.user.id });
+    const users = await User.find({});
+    res.send(users);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
 router.patch("/users/me", auth, async (req, res) => {
   const updates = Object.keys(req.body);
 
@@ -96,6 +131,28 @@ router.patch("/users/me", auth, async (req, res) => {
     res.status(400).send();
   }
 });
+
+// TO AUTHENTICATE PROFILE
+// router.patch("/users/authprofile", auth, async (req, res) => {
+//   const user = await User.findById(req.body.user.id);
+
+//   const updates = Object.keys(req.body);
+
+//   const allowedUpdates = ["name", "email", "password", "age"];
+//   const isValidOperation = updates.every((update) =>
+//     allowedUpdates.includes(update)
+//   );
+//   if (!isValidOperation) {
+//     return res.status(400).send({ Error: "Invalid Field" });
+//   }
+//   try {
+//     updates.forEach((update) => (req.user[update] = req.body[update]));
+//     await req.user.save();
+//     res.send(req.user);
+//   } catch (e) {
+//     res.status(400).send();
+//   }
+// });
 
 const upload = multer({
   limits: {

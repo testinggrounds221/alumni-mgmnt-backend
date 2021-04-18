@@ -7,6 +7,7 @@ const Task = require("../models/task");
 const userSchema = mongoose.Schema(
   {
     firstName: { type: String, required: true, trim: true, default: "Name" },
+    userType: { type: Number, required: true, default: 2 },
     passOutYear: { type: Number, required: true, trim: true, default: "2020" },
     collegeId: { type: String, required: true, trim: true, default: "cl1" },
     departmentId: { type: String, required: true, trim: true, default: "d1" },
