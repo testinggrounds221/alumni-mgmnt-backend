@@ -35,7 +35,7 @@ router.post("/users/login", cors(), async (req, res) => {
 
     res.send({ user, token });
   } catch (e) {
-    res.status(400).send();
+    res.status(401).send();
   }
 });
 
@@ -133,26 +133,17 @@ router.patch("/users/me", auth, async (req, res) => {
 });
 
 // TO AUTHENTICATE PROFILE
-// router.patch("/users/authprofile", auth, async (req, res) => {
-//   const user = await User.findById(req.body.user.id);
+router.patch("/users/authprofile", cors(), async (req, res) => {
+  const user = await User.findById(req.body.userID);
 
-//   const updates = Object.keys(req.body);
-
-//   const allowedUpdates = ["name", "email", "password", "age"];
-//   const isValidOperation = updates.every((update) =>
-//     allowedUpdates.includes(update)
-//   );
-//   if (!isValidOperation) {
-//     return res.status(400).send({ Error: "Invalid Field" });
-//   }
-//   try {
-//     updates.forEach((update) => (req.user[update] = req.body[update]));
-//     await req.user.save();
-//     res.send(req.user);
-//   } catch (e) {
-//     res.status(400).send();
-//   }
-// });
+  try {
+    user.authenticated = req.body.flag;
+    await user.save();
+    res.send(user);
+  } catch (e) {
+    res.status(400).send();
+  }
+});
 
 const upload = multer({
   limits: {
