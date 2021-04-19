@@ -113,6 +113,29 @@ router.get("/users", cors(), async (req, res) => {
   }
 });
 
+router.post("/users/filtersort", cors(), async (req, res) => {
+  const filterBy = req.body.filterBy;
+  const filterValue = req.body.filterValue;
+
+  const sortBy = req.body.sortBy;
+  const sortOrder = req.body.sortOrder;
+
+  try {
+    // const results = await User.find({ filterBy: filterValue }).sort({
+    //   filterBy: sortOrder,
+    // });
+
+    const results = await User.find({ [filterBy]: filterValue }).sort({
+      [sortBy]: sortOrder,
+    });
+    //console.log(results);
+    res.send(results);
+  } catch (e) {
+    console.log(e.message);
+    res.status(500).send();
+  }
+});
+
 router.patch("/users/me", auth, async (req, res) => {
   const updates = Object.keys(req.body);
 
