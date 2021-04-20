@@ -66,7 +66,7 @@ router.post("/users/logoutAll", auth, async (req, res) => {
 
 // auth is middleware
 router.get("/users/me", cors(), auth, async (req, res) => {
-  res.send(req.user); ///CHECK THIS
+  res.send(req.user);
 });
 
 router.get("/users/emails", cors(), async (req, res) => {
@@ -121,6 +121,7 @@ router.post("/users/onlyauthcollege", cors(), async (req, res) => {
       departmentId: 1,
       collegeId: 1,
       companyName: 1,
+      companyRole: 1,
       linkedIn: 1,
       authenticated: 1,
       userType: 1,
@@ -196,6 +197,15 @@ router.patch("/users/me", auth, async (req, res) => {
     updates.forEach((update) => (req.user[update] = req.body[update]));
     await req.user.save();
     res.send(req.user);
+  } catch (e) {
+    res.status(400).send();
+  }
+});
+
+router.post("/users/getbyid", cors(), async (req, res) => {
+  const user = await User.findById(req.body.userID);
+  try {
+    res.send(user);
   } catch (e) {
     res.status(400).send();
   }
