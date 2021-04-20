@@ -6,8 +6,8 @@ const sendWelcomeEmail = (email, name) => {
     sgMail.send({
       to: email,
       from: "testinggrounds221@gmail.com",
-      subject: "Hey There",
-      text: `Hey ${name}.`,
+      subject: "Welocome To Alumni Management !",
+      text: `Hey ${name}!! Excited to have you with us. Stay tuned to our website to get awesome and fresh updates regarding our Campus `,
     });
   } catch (e) {
     console.log(e);

@@ -18,7 +18,10 @@ router.post("/users", cors(), async (req, res) => {
 
   try {
     await user.save();
-    //sendWelcomeEmail(user.email, user.firstName); !!!!!!! CHANGE DURING PRODUCTION !!!!!!!
+    if (user.userType === 2) {
+      sendWelcomeEmail(user.email, user.firstName);
+    }
+
     res.status(201).send({ user, token });
   } catch (e) {
     res.status(400).send(e);
@@ -63,7 +66,7 @@ router.post("/users/logoutAll", auth, async (req, res) => {
 
 // auth is middleware
 router.get("/users/me", cors(), auth, async (req, res) => {
-  res.send(req.user);
+  res.send(req.user); ///CHECK THIS
 });
 
 router.get("/users/emails", cors(), async (req, res) => {
@@ -71,7 +74,7 @@ router.get("/users/emails", cors(), async (req, res) => {
   //const sort = {};
   try {
     // const tasks = await Task.find({ owner: req.user.id });
-    const users = await User.find({}, { email: 1 });
+    const users = await User.find({ userType: 2 }, { email: 1 });
     res.send(users);
   } catch (e) {
     res.status(500).send();
@@ -82,7 +85,7 @@ router.get("/users/all", cors(), async (req, res) => {
   console.log("Getting users...");
   try {
     const users = await User.find(
-      {},
+      { userType: 2 },
       {
         firstName: 1,
         email: 1,
@@ -101,12 +104,39 @@ router.get("/users/all", cors(), async (req, res) => {
   }
 });
 
+router.post("/users/onlyauthcollege", cors(), async (req, res) => {
+  console.log(`Getting users from ${req.body.collegeId}`);
+  let filterParam = {};
+  if (req.body.collegeId === "all") {
+    filterParam = { userType: 2 };
+  } else {
+    filterParam = { userType: 2, collegeId: req.body.collegeId };
+  }
+
+  try {
+    const users = await User.find(filterParam, {
+      firstName: 1,
+      email: 1,
+      passOutYear: 1,
+      departmentId: 1,
+      collegeId: 1,
+      companyName: 1,
+      linkedIn: 1,
+      authenticated: 1,
+      userType: 1,
+    });
+    res.send(users);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
 router.get("/users", cors(), async (req, res) => {
   //const match = {};
   //const sort = {};
   try {
     // const tasks = await Task.find({ owner: req.user.id });
-    const users = await User.find({});
+    const users = await User.find({ userType: 2 });
     res.send(users);
   } catch (e) {
     res.status(500).send();
@@ -119,13 +149,29 @@ router.post("/users/filtersort", cors(), async (req, res) => {
 
   const sortBy = req.body.sortBy;
   const sortOrder = req.body.sortOrder;
+  const showCollege = req.body.showCollege;
+
+  let filterParam = {};
+  if (showCollege === "all") {
+    filterParam = {
+      [filterBy]: filterValue,
+      userType: 2,
+    };
+    console.log("Show All College");
+  } else {
+    filterParam = {
+      [filterBy]: filterValue,
+      userType: 2,
+      collegeId: showCollege,
+    };
+  }
 
   try {
     // const results = await User.find({ filterBy: filterValue }).sort({
     //   filterBy: sortOrder,
     // });
 
-    const results = await User.find({ [filterBy]: filterValue }).sort({
+    const results = await User.find(filterParam).sort({
       [sortBy]: sortOrder,
     });
     //console.log(results);
